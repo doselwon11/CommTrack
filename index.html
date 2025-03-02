@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CommTrack: Community Tracker</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+    </head>
+    <body>
+        <header>
+            <h1>CommTrack: Community Tracker</h1>
+            <p>Report infrastructure and social issues in your community.</p>
+            <p>Change your community.</p>
+        </header>
+        
+        <section class="report-form">
+            <h2>Report an Infrastructure Issue</h2>
+            <form id="infraForm">
+                <label for="infraCategory">Select issue category:</label><br>
+                <select id="infraCategory" required>
+                    <option value="roads">Damaged roads, bridges, tunnels, and infrastructure</option>
+                    <option value="dataloss">Technological issues</option>
+                    <option value="electricity">Gas/electricity/energy issues</option>
+                    <option value="water">Water supply issues</option>
+                    <option value="transport">Transportation issues</option>
+                    <option value="wifi">No Internet access</option>
+                    <option value="maintenance">Maintenance issues</option>
+                    <option value="others">Others</option>
+                </select><br>
+                
+                <label for="infraDescription">Description (Optional):</label><br>
+                <textarea id="infraDescription" placeholder="Describe the issue..."></textarea><br>
+                
+                <label for="infraLocation">Location:</label><br>
+                <input type="text" id="infraLocation" placeholder="Enter address..." list="addressSuggestions" required>
+                <datalist id="addressSuggestions"></datalist>
+                <button type="button" onclick="getUserLocation()">Use Current Location</button><br>
+                
+                <label for="infraImage">Attach Photo (Optional):</label><br>
+                <input type="file" id="infraImage"><br>
+                
+                <button type="submit">Submit Report</button>
+            </form>
+        </section>
+        
+        <section class="report-form">
+            <h2>Report a Social Issue</h2>
+            <form id="socialForm">
+                <label for="socialCategory">Select issue category:</label><br>
+                <select id="socialCategory" required>
+                    <option value="racism">Racism</option>
+                    <option value="unemployment">Unemployment</option>
+                    <option value="crime">Crime</option>
+                    <option value="education">Education issues</option>
+                    <option value="corruption">Corruption</option>
+                    <option value="economic-inequality">Economic inequality</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="child-labour">Child labour</option>
+                    <option value="environmental">Environmental issues</option>
+                    <option value="gender-inequality">Gender inequality</option>
+                    <option value="lgbtq+">LGBTQ+ rights</option>
+                    <option value="homelessness">Homelessness</option>
+                    <option value="addiction">Addiction</option>
+                    <option value="animal-rights">Animal rights</option>
+                    <option value="violence">Violence</option>
+                    <option value="human-rights">Human rights</option>
+                    <option value="political">Political issues</option>
+                    <option value="others">Others</option>
+                </select><br>
+                
+                <label for="socialFrequency">How often do you experience this?</label><br>
+                <select id="socialFrequency" required>
+                    <option value="never">Not often or never</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly">Monthly</option>
+                </select><br>
+
+                <label for="socialFrequency">How often does a family member, friend, or acquaintance of yours experience this?</label><br>
+                <select id="socialFrequency" required>
+                    <option value="never">Not often or never</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly">Monthly</option>
+                </select><br>
+
+                <label for="socialDescription">Description (Optional):</label><br>
+                <textarea id="socialDescription" placeholder="Describe the issue..."></textarea><br>
+                
+                <label for="country">Country:</label><br>
+                <select id="country" required></select><br>
+                
+                <label for="city">City:</label><br>
+                <input type="text" id="city" placeholder="Enter city..."><br>
+                
+                <label for="region">State/Region/Province:</label><br>
+                <select id="region" required></select><br>
+
+                <label for="live-travel">Are you currently travelling or living, or have you ever travelled or lived in the location you chose?</label><br>
+                <select id="live-travel" required>
+                    <option value="yes">Yes, I am travelling or living, or have travelled or lived in this place.</option>
+                    <option value="no">No, I am not travelling or living, or have never travelled or lived in this place.</option>
+                </select><br>
+
+                <label for="live-travel">Are your family members, friends, relatives,... currently travelling or living, or have they ever travelled or lived in the location you chose?</label><br>
+                <select id="live-travel" required>
+                    <option value="yes">Yes, they are travelling or living, or have travelled or lived in this place.</option>
+                    <option value="no">No, they are not travelling or living, or have never travelled or lived in this place.</option>
+                </select><br>
+                
+                <button type="submit">Submit Report</button>
+            </form>
+        </section>
+        
+        <section class="map-section">
+            <h2>Reported Issues Map</h2>
+            <h4>Infrastructure Issues</h4>
+            <div id="infraMap" class="map-container"></div>
+            <h4>Social Issues</h4>
+            <div id="socialMap" class="map-container"></div>
+        </section>
+        
+        <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+        <script src="script.js"></script>
+        <script src="fetch_regions.js"></script>
+    </body>
+</html>
