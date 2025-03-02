@@ -20,26 +20,49 @@ function fetchReports() {
     fetch(`${API_URL}/get_reports`)
     .then(response => response.json())
     .then(data => {
-        let reportList = document.getElementById("reportRankings");
-
-        // check if reportRankings element exists before modifying it
-        if (!reportList) {
+        let reportDiv = document.getElementById("reportRankings");
+        // check if the div exists
+        if (!reportDiv) {
             console.error("Error: reportRankings element not found.");
             return;
         }
-
-        reportList.innerHTML = "<h2>Report Rankings</h2>";
-
-        data.forEach(report => {
-            let item = document.createElement("p");
-            item.innerHTML = `<strong>${report.country}</strong>: 
-                ${report.total_infrastructure_issues} Infrastructure Issues, 
-                ${report.total_social_issues} Social Issues`;
-            reportList.appendChild(item);
+        // create the table
+        let tableHTML = `
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Country</th>
+                        <th>Infrastructure Issues</th>
+                        <th>Social Issues</th>
+                        <th>Total Issues</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        // sort and add data rows
+        data.forEach((report, index) => {
+            let totalIssues = report.total_infrastructure_issues + report.total_social_issues;
+            tableHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${report.country}</td>
+                    <td>${report.total_infrastructure_issues}</td>
+                    <td>${report.total_social_issues}</td>
+                    <td>${totalIssues}</td>
+                </tr>
+            `;
         });
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+        // insert the table into the div
+        reportDiv.innerHTML = tableHTML;
     })
     .catch(error => console.error("Error fetching reports:", error));
 }
+
 
 // attach event listeners to form submissions
 document.getElementById("infraForm").addEventListener("submit", function(event) {

@@ -108,3 +108,30 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 8px;
 }
+
+/* report ranking */
+.data-ranking {
+    text-align: center; /* centers the section title */
+}
+
+#reportRankings {
+    display: flex;
+    justify-content: center; /* centers the table horizontally */
+}
+
+#reportRankings table {
+    border-collapse: collapse;
+    width: 80%; /* adjust this value to control table width */
+    max-width: 900px; /* prevents table from being too wide */
+    text-align: center; /* ensures text in table is centered */
+}
+
+#reportRankings th, #reportRankings td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#reportRankings th {
+    background-color: #49e8ff; /* tropical blue header */
+    font-weight: bold;
+}

@@ -113,29 +113,45 @@ function getUserLocation() {
 let addressTimeout; // debounce timer
 function searchAddress() {
     clearTimeout(addressTimeout); // clear previous timer
+
     addressTimeout = setTimeout(() => {
-        const query = document.getElementById("infraLocation").value;
+        const query = document.getElementById("infraLocation").value.trim();
         const addressList = document.getElementById("addressSuggestions");
+
         if (!addressList) {
             console.error("Address suggestions element not found.");
             return;
         }
         if (query.length < 3) return; // only search when at least 3 characters are entered
-        
-        const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
-        fetch(apiUrl)
-            .then(response => response.json())
+        // use a faster Nominatim instance (you can replace this with your own)
+        const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
+        fetch(apiUrl, { method: "GET", headers: { "Accept-Language": "en" } })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 addressList.innerHTML = ""; // clear previous results
+
+                if (data.length === 0) {
+                    console.warn("No address results found.");
+                    return;
+                }
+
                 data.forEach(location => {
                     let option = document.createElement("option");
                     option.value = location.display_name;
                     addressList.appendChild(option);
                 });
             })
-            .catch(error => console.error("Error fetching address suggestions:", error));
-    }, 500); // debounce delay of 500ms
+            .catch(error => {
+                console.error("Error fetching address suggestions:", error);
+            });
+    }, 300); // reduced debounce delay for faster responses
 }
+
 
 // function to handle form submissions
 function handleFormSubmit(event, type) {
