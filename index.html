@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CommTrack: Community Tracker</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
         <link rel="stylesheet" href="styles.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
     </head>
@@ -31,7 +32,8 @@
                 </select><br>
                 
                 <label for="infraDescription">Description:</label>
-                <textarea id="infraDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible..."></textarea><br>
+                <textarea id="infraDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible..."
+                oninput="suggestCategory(event, 'infrastructure')"></textarea><br>
 
                 <label for="infraIssueTime">How long has this issue been occurred?</label>
                 <select id="infraIssueTime" required>
@@ -106,9 +108,10 @@
                 </select><br>
 
                 <label for="socialDescription">Description:</label>
-                <textarea id="socialDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible."></textarea><br>
+                <textarea id="socialDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible."
+                oninput="suggestCategory(event, 'social')"></textarea><br>
                 
-                <label for="country">Country:</label><br>
+                <label for="country">Country:</label>
                 <select id="country" required></select><br>
                 
                 <label for="city">City:</label>
@@ -159,5 +162,6 @@
         <script src="fetch_regions.js"></script>
         <script src="fetch_report_data.js"></script>
         <script src="fetch_index_data.js"></script>
+        <script src="categorise-issue.js"></script>
     </body>
 </html>
