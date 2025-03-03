@@ -21,11 +21,13 @@ function fetchReports() {
     .then(response => response.json())
     .then(data => {
         let reportDiv = document.getElementById("reportRankings");
+
         // check if the div exists
         if (!reportDiv) {
             console.error("Error: reportRankings element not found.");
             return;
         }
+
         // create the table
         let tableHTML = `
             <table border="1" cellspacing="0" cellpadding="5">
@@ -40,6 +42,7 @@ function fetchReports() {
                 </thead>
                 <tbody>
         `;
+
         // sort and add data rows
         data.forEach((report, index) => {
             let totalIssues = report.total_infrastructure_issues + report.total_social_issues;
@@ -53,16 +56,17 @@ function fetchReports() {
                 </tr>
             `;
         });
+
         tableHTML += `
                 </tbody>
             </table>
         `;
+
         // insert the table into the div
         reportDiv.innerHTML = tableHTML;
     })
     .catch(error => console.error("Error fetching reports:", error));
 }
-
 
 // attach event listeners to form submissions
 document.getElementById("infraForm").addEventListener("submit", function(event) {

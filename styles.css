@@ -109,21 +109,20 @@ button:hover {
     border-radius: 8px;
 }
 
-/* report ranking */
 .data-ranking {
-    text-align: center; /* centers the section title */
+    text-align: center; /* Centers the section title */
 }
 
 #reportRankings {
     display: flex;
-    justify-content: center; /* centers the table horizontally */
+    justify-content: center; /* Centers the table horizontally */
 }
 
 #reportRankings table {
     border-collapse: collapse;
-    width: 80%; /* adjust this value to control table width */
-    max-width: 900px; /* prevents table from being too wide */
-    text-align: center; /* ensures text in table is centered */
+    width: 80%; /* Adjust this value to control table width */
+    max-width: 900px; /* Prevents table from being too wide */
+    text-align: center; /* Ensures text in table is centered */
 }
 
 #reportRankings th, #reportRankings td {
@@ -132,6 +131,6 @@ button:hover {
 }
 
 #reportRankings th {
-    background-color: #49e8ff; /* tropical blue header */
+    background-color: #6495ED; /* Light gray header */
     font-weight: bold;
 }
