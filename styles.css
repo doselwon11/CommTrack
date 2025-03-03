@@ -1,7 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;700&display=swap');
+
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Noto Sans', sans-serif;
+    background-image: url('https://s3.amazonaws.com/cms.ipressroom.com/173/files/20233/6436fb312cfac278e61b35e3_Earth/Earth_6c8e2055-a159-4dd2-807b-95a29ee9d168-prv.jpg');
+    background-size: cover; /* ensures image covers the entire viewport */
+    background-position: center; /* centers the image */
+    background-attachment: fixed; /* keeps image static */
+    background-repeat: no-repeat; /* prevents tiling */
     margin: 0;
     padding: 0;
 }
@@ -39,8 +45,11 @@ h2 {
     text-align: center;
 }
 
+h3, h4 {
+    color: white;
+}
+
 label {
-    font-weight: bold;
     color: #2c3e50;
     display: block;
     margin-top: 10px;
@@ -67,7 +76,7 @@ textarea {
 }
 
 select {
-    width: 40%;
+    width: 50%;
 }
 
 input {
@@ -127,10 +136,36 @@ button:hover {
 
 #reportRankings th, #reportRankings td {
     border: 1px solid #ccc;
+    background-color: #d3d3d3;
     padding: 10px;
 }
 
+/* report ranking table styling */
 #reportRankings th {
+    background-color: #6495ED; /* dark blue header */
+    font-weight: bold;
+}
+
+#indexRankings {
+    display: flex;
+    justify-content: center; /* centers the table horizontally */
+}
+
+/* index ranking table styling */
+#indexRankings table {
+    border-collapse: collapse;
+    width: 80%; /* adjust this value to control table width */
+    max-width: 900px; /* prevents table from being too wide */
+    text-align: center; /* ensures text in table is centered */
+}
+
+#indexRankings th, #indexRankings td {
+    border: 1px solid #ccc;
+    background-color: #d3d3d3;
+    padding: 10px;
+}
+
+#indexRankings th {
     background-color: #6495ED; /* dark blue header */
     font-weight: bold;
 }

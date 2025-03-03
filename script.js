@@ -100,10 +100,25 @@ function getUserLocation() {
         navigator.geolocation.getCurrentPosition(position => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
+            
+            // reverse geocoding to get country name
+            const reverseGeocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
+
+            fetch(reverseGeocodeUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.address && data.address.country) {
+                        document.getElementById("country").value = data.address.country;
+                    }
+                })
+                .catch(error => console.error("Error fetching country from coordinates:", error));
+            // update the location input field
             document.getElementById("infraLocation").value = `Lat: ${lat}, Lon: ${lon}`;
-            addMarker("infraMap", lon, lat, "Current Location");
-        }, () => {
-            alert("Unable to retrieve your location.");
+            // add a marker on the map
+            addMarker("infraMap", lon, lat, "Current Location"); // Correct order: lon, lat
+        }, error => {
+            console.error("Geolocation error:", error);
+            alert("Unable to retrieve your location. Ensure location services are enabled.");
         });
     } else {
         alert("Geolocation is not supported by your browser.");
@@ -121,17 +136,24 @@ function searchAddress() {
             return;
         }
         if (query.length < 3) return; // only search when at least 3 characters are entered
-        
-        const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+        const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1`;
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
                 addressList.innerHTML = ""; // clear previous results
+                if (data.length === 0) {
+                    console.error("No results found.");
+                    return;
+                }
                 data.forEach(location => {
                     let option = document.createElement("option");
                     option.value = location.display_name;
                     addressList.appendChild(option);
                 });
+                // automatically select the first result's country
+                if (data[0].address && data[0].address.country) {
+                    document.getElementById("country").value = data[0].address.country;
+                }
             })
             .catch(error => console.error("Error fetching address suggestions:", error));
     }, 500); // debounce delay of 500ms

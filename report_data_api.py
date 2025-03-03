@@ -9,6 +9,9 @@ CORS(app)  # enable CORS
 # dictionary to store reports categorized by country and year
 report_database = defaultdict(lambda: {"infrastructure": defaultdict(int), "social": defaultdict(int)})
 
+# normalization factor (adjust for scaling)
+NORMALIZATION_FACTOR = 1000  # prevents drastic score drops for small countries
+
 # categories mapping for infrastructure issues
 infrastructure_categories = {
     "roads": "Damaged roads, bridges, tunnels, and infrastructure",
@@ -86,6 +89,33 @@ def get_reports():
     ranked_reports.sort(key=lambda x: (x["total_infrastructure_issues"], x["total_social_issues"]), reverse=True)
 
     return jsonify(ranked_reports), 200
+
+@app.route('/get_impact_index', methods=['GET'])
+def get_impact_index():
+    ranked_data = []
+
+    for country, issues in report_database.items():
+        infra_total = sum(issues["infrastructure"].values())
+        social_total = sum(issues["social"].values())
+
+        # calculate scores with maximum starting point (100)
+        infra_score = max(0, 100 - (infra_total * 100 / NORMALIZATION_FACTOR))
+        social_score = max(0, 100 - (social_total * 100 / NORMALIZATION_FACTOR))
+
+        # final impact index score
+        impact_index = (infra_score + social_score) / 2
+
+        ranked_data.append({
+            "country": country,
+            "infrastructure_score": round(infra_score, 2),
+            "social_score": round(social_score, 2),
+            "impact_index": round(impact_index, 2)
+        })
+
+    # sort by highest impact index score
+    ranked_data.sort(key=lambda x: x["impact_index"], reverse=True)
+
+    return jsonify(ranked_data), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,5 +1,3 @@
-const API_URL = "http://127.0.0.1:5000";
-
 // function to send a report to the backend
 function sendReport(reportType, category, country) {
     fetch(`${API_URL}/submit_report`, {
