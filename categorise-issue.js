@@ -1,7 +1,7 @@
 const infrastructureKeywords = {
     "roads": ["pothole", "bridge", "tunnel", "road damage", "crack", "highway", "corrugations", "rut", "ravel", "frost", "upheaval", "fatigue"],
     "dataloss": ["server", "data loss", "malfunction", "outage", "cyber", "hardware", "software", "corruption", "cyberthreats", "cybersecurity", "AI"],
-    "electricity": ["blackout", "power outage", "transformer", "electrical", "circuit", "buzzing", "warm outlets", "burning", "loose outlet"],
+    "electricity": ["blackout", "power outage", "transformer", "electrical", "circuit", "buzzing", "warm outlets", "burning", "loose outlet", "power", "electricity", "energy", "gas"],
     "water": ["water leak", "pipe burst", "contamination", "drought", "water pollution", "flood", "oil spillages", "contamination", "wastewater", "poor water"],
     "transport": ["bus stop", "train delay", "traffic jam", "subway", "traffic congestion", "transport environment", "inadequate transport"],
     "wifi": ["internet down", "no signal", "network issue", "wifi broken", "wi-fi", "dns", "slow internet", "internet loss", "vpn", "dns"],

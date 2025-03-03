@@ -197,6 +197,57 @@ function handleFormSubmit(event, type) {
         .catch(error => console.error("Error fetching coordinates:", error));
 }
 
+// function for users to share report on social media
+function shareReport() {
+    let reportText = "I've reported an issue on CommTrack! Help make a change: ";
+    let reportURL = window.location.href;
+
+    let encodedText = encodeURIComponent(reportText);
+    let encodedURL = encodeURIComponent(reportURL);
+
+    let xURL = `https://x.com/intent/tweet?text=${encodedText}&url=${encodedURL}`;
+    let facebookURL = `https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`;
+
+    let shareOptions = `
+        <div style="margin-top:10px; padding:10px; background-color:#f4f4f4; border-radius:5px;">
+            <strong>Share your report:</strong><br>
+            <a href="${xURL}" target="_blank" style="margin-right: 10px;">
+            <img src="https://cdn.iconscout.com/icon/free/png-512/free-twitter-x-icon-download-in-svg-png-gif-file-formats--logo-social-media-logos-pack-icons-7740647.png?f=webp&w=256" 
+            alt="X logo" style="width:20px;height:20px;">X (Twitter)</a>
+            <a href="${facebookURL}" target="_blank" style="margin-right: 10px;">
+            <img src="https://cdn.iconscout.com/icon/free/png-512/free-facebook-logo-icon-download-in-svg-png-gif-file-formats--fb-new-color-social-media-logos-icons-1350125.png?f=webp&w=256" 
+            alt="Facebook logo" style="width:20px;height:20px;">Facebook</a>
+        </div>
+    `;
+
+    let shareDiv = document.getElementById("shareOptions");
+    if (shareDiv) {
+        shareDiv.innerHTML = shareOptions;
+        shareDiv.style.display = "block"; // Ensure it's visible
+    } else {
+        console.error("Error: shareOptions div not found.");
+    }
+}
+
+// ensure sharing options are hidden initially
+document.addEventListener("DOMContentLoaded", function () {
+    let shareDiv = document.getElementById("shareOptions");
+    if (shareDiv) {
+        shareDiv.style.display = "none";
+    }
+});
+
+// show sharing options only after form submission
+document.getElementById("infraForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    shareReport();
+});
+
+document.getElementById("socialForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    shareReport();
+});
+
 // attach event listeners to forms
 document.getElementById("infraForm").addEventListener("submit", (event) => handleFormSubmit(event, "infrastructure"));
 document.getElementById("socialForm").addEventListener("submit", (event) => handleFormSubmit(event, "social"));
