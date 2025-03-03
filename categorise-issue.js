@@ -6,6 +6,7 @@ const infrastructureKeywords = {
     "transport": ["bus stop", "train delay", "traffic jam", "subway", "traffic congestion", "transport environment", "inadequate transport"],
     "wifi": ["internet down", "no signal", "network issue", "wifi broken", "wi-fi", "dns", "slow internet", "internet loss", "vpn", "dns"],
     "maintenance": ["building damage", "structural issue", "falling debris", "ageing", "deterioration", "damage", "compromised communication"],
+    "weather": ["droughts", "floods", "thunderstorms", "tornado", "storm", "thunder", "hail", "blizzard", "wind", "cyclone", "heat", "rainfall", "snow", "freezing", "rain", "wildfire", "fire"],
     "others": []
 };
 
@@ -27,6 +28,7 @@ const socialKeywords = {
     "violence": ["assault", "murder", "domestic violence", "kill", "suicide", "bombing", "shooting", "shoot", "bomb", "assasination"],
     "human-rights": ["torture", "freedom", "abuse", "humans"],
     "political": ["protest", "election issue", "corruption"],
+    "climate": ["droughts", "floods", "thunderstorms", "tornado", "storm", "thunder", "hail", "blizzard", "wind", "cyclone", "heat", "rainfall", "snow", "freezing", "rain", "wildfire", "fire"],
     "others": []
 };
 

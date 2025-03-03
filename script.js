@@ -10,27 +10,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // function to initialize maps using openlayers
 const mapInstances = {};
-const allMarkers = { 'infraMap': [], 'socialMap': [] }; // store all markers
+const heatmapSources = { 'infraMap': new ol.source.Vector(), 'socialMap': new ol.source.Vector() };
 
 function initMaps() {
     mapInstances['infraMap'] = createMap('infraMap');
     mapInstances['socialMap'] = createMap('socialMap');
 }
 
-function createMap(mapId) {
-    const map = new ol.Map({
-        target: mapId,
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
-            })
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([0, 0]),
-            zoom: 2
-        })
+// function to create a heatmap layer
+function createHeatmapLayer(source) {
+    return new ol.layer.Heatmap({
+        source: source,
+        blur: 20, // how blurry the heat spots are
+        radius: 10, // radius of influence for each issue
+        weight: function (feature) {
+            return 1; // set uniform weight for now (can be adjusted dynamically)
+        }
     });
-    return map;
+}
+
+function initMaps() {
+    mapInstances['infraMap'] = new ol.Map({
+        target: 'infraMap',
+        layers: [
+            new ol.layer.Tile({ source: new ol.source.OSM() }),
+            createHeatmapLayer(heatmapSources['infraMap'])
+        ],
+        view: new ol.View({ center: ol.proj.fromLonLat([0, 0]), zoom: 2 })
+    });
+
+    mapInstances['socialMap'] = new ol.Map({
+        target: 'socialMap',
+        layers: [
+            new ol.layer.Tile({ source: new ol.source.OSM() }),
+            createHeatmapLayer(heatmapSources['socialMap'])
+        ],
+        view: new ol.View({ center: ol.proj.fromLonLat([0, 0]), zoom: 2 })
+    });
+}
+
+// function to add a report to the heatmap
+function addReportToHeatmap(mapId, lon, lat) {
+    if (!mapInstances[mapId]) {
+        console.error("Map instance not found for:", mapId);
+        return;
+    }
+
+    let feature = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
+    });
+
+    heatmapSources[mapId].addFeature(feature);
 }
 
 // function to load country list into dropdown
@@ -48,50 +78,6 @@ function loadCountries() {
             });
         })
         .catch(error => console.error('Error loading countries:', error));
-}
-
-// function to add markers to maps
-function addMarker(mapId, lon, lat, category) {
-    if (!mapInstances[mapId]) {
-        console.error('Map instance not found for:', mapId);
-        return;
-    }
-    
-    const marker = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
-    });
-    const vectorSource = new ol.source.Vector({
-        features: [marker]
-    });
-    const vectorLayer = new ol.layer.Vector({
-        source: vectorSource,
-        style: new ol.style.Style({
-            image: new ol.style.Icon({
-                anchor: [0.5, 1],
-                src: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
-            })
-        })
-    });
-    
-    mapInstances[mapId].addLayer(vectorLayer);
-    allMarkers[mapId].push({ lon, lat, category }); // store marker data
-    if (allMarkers[mapId].length > 1) {
-        updateMapView(mapId);
-    }
-}
-
-// function to update map view to fit all markers
-function updateMapView(mapId) {
-    if (allMarkers[mapId].length === 0) return;
-    
-    const extent = ol.extent.createEmpty();
-    allMarkers[mapId].forEach(marker => {
-        ol.extent.extend(extent, ol.proj.fromLonLat([marker.lon, marker.lat]));
-    });
-    
-    if (!ol.extent.isEmpty(extent)) {
-        mapInstances[mapId].getView().fit(extent, { padding: [50, 50, 50, 50], duration: 1000 });
-    }
 }
 
 // function to fetch user's location and place a marker
@@ -166,32 +152,26 @@ function handleFormSubmit(event, type) {
 
     if (type === 'infrastructure') {
         category = document.getElementById("infraCategory").value;
-        location = document.getElementById("infraLocation").value.trim();
-    } else {
+        location = document.getElementById("infraLocation").value;
+    } 
+    else {
         category = document.getElementById("socialCategory").value;
-        const city = document.getElementById("city").value.trim();
-        const region = document.getElementById("region").value.trim();
-        const country = document.getElementById("country").value.trim();
-        location = `${city}, ${region}, ${country}`;
+        location = document.getElementById("city").value + ', ' + document.getElementById("region").value + ', ' + document.getElementById("country").value;
     }
 
-    if (!location || location === ', ,') {
-        alert("please enter a valid location.");
-        return;
-    }
-    
     const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`;
-    
+
     fetch(geocodeUrl)
         .then(response => response.json())
         .then(data => {
             if (data.length > 0) {
                 const lat = parseFloat(data[0].lat);
                 const lon = parseFloat(data[0].lon);
-                addMarker(type === 'infrastructure' ? "infraMap" : "socialMap", lon, lat, category);
-                alert("Report submitted successfully! Thank you for your report!");
-            } else {
-                alert("Could not find location coordinates. Please enter a valid address with city, state, and country.");
+                addReportToHeatmap(type === 'infrastructure' ? "infraMap" : "socialMap", lon, lat);
+                alert("Report submitted successfully! Thank you for your report");
+            } 
+            else {
+                alert("Could not find location coordinates. Please enter a valid address.");
             }
         })
         .catch(error => console.error("Error fetching coordinates:", error));
