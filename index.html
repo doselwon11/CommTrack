@@ -18,8 +18,9 @@
                 <a href="#infraForm" class="nav-link">Infrastructure Report Form</a>
                 <a href="#socialForm" class="nav-link">Social Report Form</a>
                 <a href="#heatmap-section" class="nav-link">Heatmaps</a>
-                <a href="#issues-data-report" class="nav-link">Data Report - Summary</a>
-                <a href="#impact-index" class="nav-link">Data Report - Impact Index</a>
+                <a href="#data-ranking" class="nav-link">Data Report - Summary</a>
+                <a href="#data-ranking" class="nav-link">Data Report - Impact Index</a>
+                <a href="#trend-analysis" class="nav-link">Trend Analysis</a>
               </nav>
         </header>
         
@@ -148,26 +149,28 @@
         </section>
         
         <section class="map-section" id="heatmap-section">
-            <h2 style="color:white">Reported Issues Map</h2>
+            <h2>Reported Issues Map</h2>
             <h4>Infrastructure Issues</h4>
             <div id="infraMap" class="map-container"></div>
             <h4>Social Issues</h4>
             <div id="socialMap" class="map-container"></div>
-        </section>
-
-        <section class="data-ranking" id="issues-data-report">
-            <h2 style="color:white">Data Report</h2>
-            <h3>Issues Reported by Countries</h3>
-            <div id="reportRankings" style="margin:auto"></div>
         </section><br>
 
-        <section class="data-ranking" id="impact-index">
-            <h3>Community Infrastructure and Social Impact Index</h3>
-            <p>We calculated the infrastructure and social impact index based on the number of reports by each country.</p>
-            <div id="indexRankings" style="margin:auto"></div>
+        <section class="data-ranking" id="data-ranking">
+            <h2>Data Report</h2>
+            <div id="issues-data-report">
+                <h3>Issues Reported by Countries</h3>
+                <p>We published this data for governmental and non-governmental organizations to take notice.</p>
+                <div id="reportRankings" style="margin:auto"></div>
+            </div>
+            <div id="impact-index">
+                <h3>Community Infrastructure and Social Impact Index</h3>
+                <p>We calculated the infrastructure and social impact index based on the number of reports by each country.</p>
+                <div id="indexRankings" style="margin:auto"></div>
+            </div><br>
         </section><br>
 
-        <section class="trend-analysis">
+        <section class="trend-analysis" id="trend-analysis">
             <h2>Analysis: Issue Trends Over Time</h2>
         
             <label for="trendCountry">Select Country:</label>
