@@ -17,7 +17,7 @@ header {
     color: white;
     text-align: center;
     padding: 20px;
-    font-size: 24px;
+    font-size: 14px;
 }
 
 p {
@@ -168,4 +168,23 @@ button:hover {
 #indexRankings th {
     background-color: #6495ED; /* dark blue header */
     font-weight: bold;
+}
+
+/* navigation bar styling */
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+  
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+  
+nav a:hover {
+    background: #007BFF;
+    border-radius: 5px;
 }

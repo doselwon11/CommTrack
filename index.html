@@ -14,6 +14,13 @@
             <p>CommTrack empowers communities by providing a transparent platform to report infrastructure and social issues, 
             fostering data-driven solutions for a more resilient, connected, and equitable world.</p>
             <p><i>Your Report, A Better Tomorrow.</i></p>
+            <nav id="navbar">
+                <a href="#infraForm" class="nav-link">Infrastructure Report Form</a>
+                <a href="#socialForm" class="nav-link">Social Report Form</a>
+                <a href="#heatmap-section" class="nav-link">Heatmaps</a>
+                <a href="#issues-data-report" class="nav-link">Data Report - Summary</a>
+                <a href="#impact-index" class="nav-link">Data Report - Impact Index</a>
+              </nav>
         </header>
         
         <section class="report-form">
@@ -140,7 +147,7 @@
             </form>
         </section>
         
-        <section class="map-section">
+        <section class="map-section" id="heatmap-section">
             <h2 style="color:white">Reported Issues Map</h2>
             <h4>Infrastructure Issues</h4>
             <div id="infraMap" class="map-container"></div>
@@ -148,13 +155,13 @@
             <div id="socialMap" class="map-container"></div>
         </section>
 
-        <section class="data-ranking">
+        <section class="data-ranking" id="issues-data-report">
             <h2 style="color:white">Data Report</h2>
             <h3>Issues Reported by Countries</h3>
             <div id="reportRankings" style="margin:auto"></div>
         </section><br>
 
-        <section class="data-ranking">
+        <section class="data-ranking" id="impact-index">
             <h3>Community Infrastructure and Social Impact Index</h3>
             <p>We calculated the infrastructure and social impact index based on the number of reports by each country.</p>
             <div id="indexRankings" style="margin:auto"></div>
