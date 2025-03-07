@@ -4,10 +4,13 @@ from collections import defaultdict
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)  # enable CORS
+CORS(app, resources={r"/*": {"origins": "*"}})  # allow all origins
 
 # dictionary to store reports categorized by country and year
-report_database = defaultdict(lambda: {"infrastructure": defaultdict(int), "social": defaultdict(int)})
+report_database = defaultdict(lambda: {
+    "infrastructure": defaultdict(int),
+    "social": defaultdict(int)
+})
 
 # normalization factor (adjust for scaling)
 NORMALIZATION_FACTOR = 1000  # prevents drastic score drops for small countries
@@ -46,9 +49,18 @@ social_categories = {
     "others": "Others"
 }
 
-@app.route('/submit_report', methods=['POST'])
+@app.route('/submit_report', methods=['OPTIONS', 'POST'])
 def submit_report():
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "CORS preflight request successful"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        return response, 200
+
     data = request.json
+    if not data:
+        return jsonify({"error": "No data received"}), 400
 
     # extract report details
     report_type = data.get("type")  # infrastructure or social
@@ -61,11 +73,9 @@ def submit_report():
 
     # map category to broader classifications
     if report_type == "infrastructure":
-        category_name = infrastructure_categories.get(category, "Others")
-        report_database[country]["infrastructure"][category_name] += 1
+        report_database[country]["infrastructure"][category] += 1
     elif report_type == "social":
-        category_name = social_categories.get(category, "Others")
-        report_database[country]["social"][category_name] += 1
+        report_database[country]["social"][category] += 1
     else:
         return jsonify({"error": "Invalid report type"}), 400
 
@@ -116,6 +126,37 @@ def get_impact_index():
     ranked_data.sort(key=lambda x: x["impact_index"], reverse=True)
 
     return jsonify(ranked_data), 200
+
+@app.route('/get_issue_trends', methods=['GET'])
+def get_issue_trends():
+    country = request.args.get("country")
+    category = request.args.get("category")
+    
+    filtered_data = {}
+
+    for c, data in report_database.items():
+        if country and c != country:
+            continue  # Skip if country does not match
+
+        filtered_data[c] = {
+            "infrastructure": [],
+            "social": []
+        }
+
+        # Convert raw numbers into iterable lists
+        for cat, count in data["infrastructure"].items():
+            if isinstance(count, int):
+                filtered_data[c]["infrastructure"].append([str(datetime.now().year), count])
+            else:
+                filtered_data[c]["infrastructure"].append(count)
+
+        for cat, count in data["social"].items():
+            if isinstance(count, int):
+                filtered_data[c]["social"].append([str(datetime.now().year), count])
+            else:
+                filtered_data[c]["social"].append(count)
+
+    return jsonify(filtered_data), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

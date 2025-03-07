@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
     initMaps();
-    loadCountries();
+    loadCountriesForForms();
 });
 
 // function to initialize maps using openlayers
@@ -64,21 +64,31 @@ function addReportToHeatmap(mapId, lon, lat) {
 }
 
 // function to load country list into dropdown
-function loadCountries() {
-    fetch('https://restcountries.com/v3.1/all')
-        .then(response => response.json())
-        .then(data => {
-            let countrySelect = document.getElementById("country");
-            data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+function loadCountriesForForms() {
+    fetchCountries().then(data => {
+        let countrySelects = document.querySelectorAll(".country-dropdown"); // Target all country dropdowns
+        countrySelects.forEach(select => {
+            select.innerHTML = ""; // Clear existing options
+
+            let defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Select a Country";
+            select.appendChild(defaultOption);
+
+            data.sort((a, b) => a.name.common.localeCompare(b.name.common)); // Sort countries alphabetically
+
             data.forEach(country => {
                 let option = document.createElement("option");
                 option.value = country.name.common;
                 option.textContent = country.name.common;
-                countrySelect.appendChild(option);
+                select.appendChild(option);
             });
-        })
-        .catch(error => console.error('Error loading countries:', error));
+        });
+    });
 }
+
+// Load countries on page load
+document.addEventListener("DOMContentLoaded", loadCountriesForForms);
 
 // function to fetch user's location and place a marker
 function getUserLocation() {

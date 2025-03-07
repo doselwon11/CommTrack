@@ -189,3 +189,31 @@ nav a:hover {
     background: #007BFF;
     border-radius: 5px;
 }
+
+/* trend analysis section styling */
+.trend-analysis {
+    background-color: white;
+    display: flex;
+    text-align: center;
+    margin: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+}
+
+.trend-analysis select {
+    display: block;
+    margin: 10px auto;
+    width: 50%;
+}
+
+.trend-analysis h2, .trend-analysis label {
+    text-align: center;
+}
+
+#infraTrendChart, #socialTrendChart {
+    margin: auto;
+    background-color: white;
+    width: 98%;
+}
