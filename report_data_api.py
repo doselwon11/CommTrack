@@ -1,11 +1,44 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from collections import defaultdict
 from datetime import datetime
 from transformers import pipeline
+from dotenv import load_dotenv
+import requests
+
+# load environment variables from .env
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # allow all origins
+
+# retrieve api key securely
+GOOGLE_TRANSLATE_API_KEY = os.getenv("GOOGLE_TRANSLATE_API_KEY")
+
+@app.route('/translate', methods=['POST'])
+def translate():
+    data = request.json
+    text = data.get("text")
+    target_lang = data.get("target_lang")
+
+    if not text or not target_lang:
+        return jsonify({"error": "Missing text or target language"}), 400
+
+    url = f"https://translation.googleapis.com/language/translate/v2?key={GOOGLE_TRANSLATE_API_KEY}"
+    
+    payload = {
+        "q": text,
+        "target": target_lang
+    }
+
+    response = requests.post(url, json=payload)
+    
+    if response.status_code == 200:
+        translation = response.json()["data"]["translations"][0]["translatedText"]
+        return jsonify({"translated_text": translation})
+    else:
+        return jsonify({"error": "Translation failed"}), 500
 
 # dictionary to store reports categorized by country and year
 report_database = defaultdict(lambda: {

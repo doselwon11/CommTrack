@@ -46,8 +46,28 @@
                 <label for="infraDescription">Description:</label>
                 <textarea id="infraDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible..."
                 oninput="suggestCategory(event, 'infrastructure')"></textarea><br>
-                <button id="infraVoiceBtn" style="width:49.5%; background-color: gray">🎙️ Speak</button>
+                <button type="button" id="infraVoiceBtn" style="width:49.5%; background-color: gray">🎙️ Speak</button>
                 <button type="button" style="width:49.5%; background-color: gray" onclick="rewriteWithAI('infraDescription')"> ✨🖊️ Rewrite with AI</button>
+                <label for="infraLangSelect">Translate to:</label>
+                <select id="infraLangSelect" style="width:49.5%">
+                    <option value="ar">Arabic</option>
+                    <option value="zh-CN">Chinese (Simplified; PRC)</option>
+                    <option value="zh-Hant">Chinese (Traditional; HK/MC/TW)</option>
+                    <option value="fil">Filipino</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="id">Indonesian</option>
+                    <option value="it">Italian</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ko">Korean</option>
+                    <option value="bm">Malaysian</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="ru">Russian</option>
+                    <option value="es">Spanish</option>
+                    <option value="th">Thai</option>
+                    <option value="vi">Vietnamese</option>
+                </select>
+                <button type="button" style="width:49.5%; background-color: gray" id="infraTranslateBtn">🌍 Translate</button>
                 <label for="infraIssueTime">How long has this issue been occurred?</label>
                 <select id="infraIssueTime" required>
                     <option value="days">A week or below</option>
@@ -131,8 +151,28 @@
                 <label for="socialDescription">Description:</label>
                 <textarea id="socialDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible."
                 oninput="suggestCategory(event, 'social')"></textarea><br>
-                <button id="socialVoiceBtn" style="width:49.5%; background-color: gray">🎙️ Speak</button>
+                <button type="button" id="socialVoiceBtn" style="width:49.5%; background-color: gray">🎙️ Speak</button>
                 <button type="button" style="width:49.5%; background-color: gray" onclick="rewriteWithAI('socialDescription')">✨🖊️ Rewrite with AI</button>
+                <label for="socialLangSelect">Translate to:</label>
+                <select id="socialLangSelect" style="width:49.5%">
+                    <option value="ar">Arabic</option>
+                    <option value="zh-CN">Chinese (Simplified; PRC)</option>
+                    <option value="zh-Hant">Chinese (Traditional; HK/MC/TW)</option>
+                    <option value="fil">Filipino</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="id">Indonesian</option>
+                    <option value="it">Italian</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ko">Korean</option>
+                    <option value="bm">Malaysian</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="ru">Russian</option>
+                    <option value="es">Spanish</option>
+                    <option value="th">Thai</option>
+                    <option value="vi">Vietnamese</option>
+                </select>
+                <button type="button" style="width:49.5%; background-color: gray" id="socialTranslateBtn">🌍 Translate</button>
                 
                 <label for="country">Country:</label>
                 <select id="country" class="country-dropdown" required></select><br>
@@ -243,6 +283,7 @@
         
         <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
         <script src="javascript/voice.js"></script>
+        <script src="javascript/translation.js"></script>
         <script src="javascript/camera.js"></script>
         <script src="javascript/config.js"></script>
         <script src="javascript/script.js"></script>
