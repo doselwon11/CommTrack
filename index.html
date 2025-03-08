@@ -25,7 +25,7 @@
         </header>
         
         <section class="report-form">
-            <h2>Report an Infrastructure Issue</h2>
+            <h2>🏗️ Report an Infrastructure Issue</h2>
             <p><b>Note</b>: In an emergency, please dial 911 or your 
                 <a href="https://travel.state.gov/content/dam/students-abroad/pdfs/911_ABROAD.pdf" target="_blank">
                     local emergency phone number</a> immediately.</p>
@@ -46,7 +46,8 @@
                 <label for="infraDescription">Description:</label>
                 <textarea id="infraDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible..."
                 oninput="suggestCategory(event, 'infrastructure')"></textarea><br>
-                <button type="button" onclick="rewriteWithAI('infraDescription')">Rewrite with AI</button>
+                <button id="infraVoiceBtn" style="width:49.5%; background-color: gray">🎙️ Speak</button>
+                <button type="button" style="width:49.5%; background-color: gray" onclick="rewriteWithAI('infraDescription')"> ✨🖊️ Rewrite with AI</button>
                 <label for="infraIssueTime">How long has this issue been occurred?</label>
                 <select id="infraIssueTime" required>
                     <option value="days">A week or below</option>
@@ -67,7 +68,7 @@
                 <label for="infraLocation">Location:</label>
                 <input type="text" id="infraLocation" placeholder="Enter address..." list="addressSuggestions" required>
                 <datalist id="addressSuggestions"></datalist>
-                <button type="button" onclick="getUserLocation()">Use Current Location</button><br>
+                <button type="button" style="background-color:gray" onclick="getUserLocation()">📍Use Current Location</button><br>
                 
                 <label for="infraImage">Attach Photo (Optional):</label>
                 <input type="file" id="infraImage"><br>
@@ -81,7 +82,7 @@
         </section>
         
         <section class="report-form">
-            <h2>Report a Social Issue</h2>
+            <h2>🌎 Report a Social Issue</h2>
             <p><b>Note</b>: In an emergency, please dial 911 or your 
                 <a href="https://travel.state.gov/content/dam/students-abroad/pdfs/911_ABROAD.pdf" target="_blank">
                     local emergency phone number</a> immediately.</p>
@@ -130,7 +131,8 @@
                 <label for="socialDescription">Description:</label>
                 <textarea id="socialDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible."
                 oninput="suggestCategory(event, 'social')"></textarea><br>
-                <button type="button" onclick="rewriteWithAI('socialDescription')">Rewrite with AI</button>
+                <button id="socialVoiceBtn" style="width:49.5%; background-color: gray">🎙️ Speak</button>
+                <button type="button" style="width:49.5%; background-color: gray" onclick="rewriteWithAI('socialDescription')">✨🖊️ Rewrite with AI</button>
                 
                 <label for="country">Country:</label>
                 <select id="country" class="country-dropdown" required></select><br>
@@ -165,7 +167,7 @@
         </section>
         
         <section class="map-section" id="heatmap-section">
-            <h2>Reported Issues Map</h2>
+            <h2>🗺️ Reported Issues Map</h2>
             <h4>Infrastructure Issues</h4>
             <div id="infraMap" class="map-container"></div>
             <h4>Social Issues</h4>
@@ -173,7 +175,7 @@
         </section><br>
 
         <section class="data-ranking" id="data-ranking">
-            <h2>Data Report</h2>
+            <h2>📋 Data Report</h2>
             <div id="issues-data-report">
                 <h3>Issues Reported by Countries</h3>
                 <p>We published this data for governmental and non-governmental organizations to take notice.</p>
@@ -187,7 +189,7 @@
         </section><br>
 
         <section class="trend-analysis" id="trend-analysis">
-            <h2>Analysis: Issue Trends Over Time</h2>
+            <h2>📈 Analysis: Issue Trends Over Time</h2>
         
             <label for="trendCountry">Select Country:</label>
             <select id="trendCountry" class="country-dropdown"></select><br>
@@ -240,6 +242,7 @@
         
         
         <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+        <script src="javascript/voice.js"></script>
         <script src="javascript/camera.js"></script>
         <script src="javascript/config.js"></script>
         <script src="javascript/script.js"></script>

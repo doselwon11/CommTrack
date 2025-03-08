@@ -178,7 +178,6 @@ function handleFormSubmit(event, type) {
                 const lat = parseFloat(data[0].lat);
                 const lon = parseFloat(data[0].lon);
                 addReportToHeatmap(type === 'infrastructure' ? "infraMap" : "socialMap", lon, lat);
-                alert("Report submitted successfully! Thank you for your report");
             } 
             else {
                 alert("Could not find location coordinates. Please enter a valid address.");

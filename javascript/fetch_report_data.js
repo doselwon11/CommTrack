@@ -16,7 +16,7 @@ function rewriteWithAI(descriptionFieldId) {
     .then(data => {
         if (data.rewritten_text) {
             document.getElementById(descriptionFieldId).value = data.rewritten_text;
-            alert("Description rewritten with AI!");
+            alert("Description has been rewritten with AI!");
         } else {
             alert("AI rewrite failed. Try again.");
         }
