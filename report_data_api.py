@@ -177,36 +177,27 @@ def get_impact_index():
 
 @app.route('/get_issue_trends', methods=['GET'])
 def get_issue_trends():
-    country = request.args.get("country")
-    category = request.args.get("category")
+    country_filter = request.args.get("country")
+    category_filter = request.args.get("category")
 
-    trends_data = {}
+    filtered_trends = {}
 
-    for c, data in report_database.items():
-        if country and c != country:
-            continue  # Skip if country filter is applied
+    for country, data in report_database.items():
+        if country_filter and country != country_filter:
+            continue  # Skip countries that don't match the filter
 
-        trends_data[c] = {
-            "infrastructure": [],
-            "social": []
-        }
+        filtered_trends[country] = {"infrastructure": {}, "social": {}}
 
-        if category:
-            # Only return trends for the selected category
-            if category in data["trends"]["infrastructure"]:
-                trends_data[c]["infrastructure"] = list(data["trends"]["infrastructure"][category].items())
+        for trend_type in ["infrastructure", "social"]:
+            for category, trend_data in data["trends"][trend_type].items():
+                if category_filter and category != category_filter:
+                    continue  # Skip categories that don't match the filter
+                
+                # Convert defaultdict(int) to a normal dictionary
+                filtered_trends[country][trend_type][category] = dict(trend_data)
 
-            if category in data["trends"]["social"]:
-                trends_data[c]["social"] = list(data["trends"]["social"][category].items())
-        else:
-            # Return all available trends
-            for cat, values in data["trends"]["infrastructure"].items():
-                trends_data[c]["infrastructure"].extend(values.items())
+    return jsonify(filtered_trends), 200
 
-            for cat, values in data["trends"]["social"].items():
-                trends_data[c]["social"].extend(values.items())
-
-    return jsonify(trends_data), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

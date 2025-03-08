@@ -1,4 +1,3 @@
-// function to visualize both infrastructure and social issue trends on a single chart
 // function to visualize trends
 function visualizeTrends(trendData) {
     console.log("Trend Data Received:", JSON.stringify(trendData, null, 2));
@@ -18,21 +17,29 @@ function visualizeTrends(trendData) {
         let infraTrends = trendData[country]["infrastructure"] || {};
         let socialTrends = trendData[country]["social"] || {};
 
-        Object.entries(infraTrends).forEach(([timestamp, count]) => {
-            labels.add(timestamp);
-            infraData[timestamp] = count;
+        // extract nested infrastructure trends
+        Object.values(infraTrends).forEach(categoryTrends => {
+            Object.entries(categoryTrends).forEach(([timestamp, count]) => {
+                labels.add(timestamp);
+                if (!infraData[timestamp]) infraData[timestamp] = 0;
+                infraData[timestamp] += count;
+            });
         });
 
-        Object.entries(socialTrends).forEach(([timestamp, count]) => {
-            labels.add(timestamp);
-            socialData[timestamp] = count;
+        // extract nested social trends
+        Object.values(socialTrends).forEach(categoryTrends => {
+            Object.entries(categoryTrends).forEach(([timestamp, count]) => {
+                labels.add(timestamp);
+                if (!socialData[timestamp]) socialData[timestamp] = 0;
+                socialData[timestamp] += count;
+            });
         });
     }
 
-    // convert sets to sorted arrays
+    // convert labels to a sorted array
     let sortedLabels = Array.from(labels).sort();
-    let infraCounts = sortedLabels.map(year => infraData[year] || 0);
-    let socialCounts = sortedLabels.map(year => socialData[year] || 0);
+    let infraCounts = sortedLabels.map(timestamp => infraData[timestamp] || 0);
+    let socialCounts = sortedLabels.map(timestamp => socialData[timestamp] || 0);
 
     // destroy existing chart if it exists
     if (window.trendChart) window.trendChart.destroy();
