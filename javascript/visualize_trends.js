@@ -1,4 +1,5 @@
 // function to visualize both infrastructure and social issue trends on a single chart
+// function to visualize trends
 function visualizeTrends(trendData) {
     console.log("Trend Data Received:", JSON.stringify(trendData, null, 2));
 
@@ -14,31 +15,17 @@ function visualizeTrends(trendData) {
     let socialData = {};
 
     for (let country in trendData) {
-        let infraTrends = trendData[country]["infrastructure"] || [];
-        let socialTrends = trendData[country]["social"] || [];
+        let infraTrends = trendData[country]["infrastructure"] || {};
+        let socialTrends = trendData[country]["social"] || {};
 
-        // process infrastructure data (handling empty lists)
-        infraTrends.forEach(entry => {
-            if (!Array.isArray(entry) || entry.length !== 2) {
-                console.error("Invalid infrastructure trend entry:", entry);
-                return;
-            }
-            let [year, count] = entry;
-            labels.add(year);
-            if (!infraData[year]) infraData[year] = 0;
-            infraData[year] += count;
+        Object.entries(infraTrends).forEach(([timestamp, count]) => {
+            labels.add(timestamp);
+            infraData[timestamp] = count;
         });
 
-        // process social data
-        socialTrends.forEach(entry => {
-            if (!Array.isArray(entry) || entry.length !== 2) {
-                console.error("Invalid social trend entry:", entry);
-                return;
-            }
-            let [year, count] = entry;
-            labels.add(year);
-            if (!socialData[year]) socialData[year] = 0;
-            socialData[year] += count;
+        Object.entries(socialTrends).forEach(([timestamp, count]) => {
+            labels.add(timestamp);
+            socialData[timestamp] = count;
         });
     }
 
@@ -50,20 +37,20 @@ function visualizeTrends(trendData) {
     // destroy existing chart if it exists
     if (window.trendChart) window.trendChart.destroy();
 
-    // create merged trend chart with whole numbers on y-axis
+    // create merged trend chart
     window.trendChart = new Chart(ctxTrend, {
         type: 'line',
         data: {
             labels: sortedLabels,
             datasets: [
                 {
-                    label: "Infrastructure Issues Over Time",
+                    label: "Infrastructure Issues",
                     data: infraCounts,
                     borderColor: "red",
                     fill: false
                 },
                 {
-                    label: "Social Issues Over Time",
+                    label: "Social Issues",
                     data: socialCounts,
                     borderColor: "blue",
                     fill: false
@@ -79,13 +66,12 @@ function visualizeTrends(trendData) {
             },
             scales: {
                 y: {
-                    type: 'logarithmic', // allows for proper scaling of increasing values
-                    min: 1, // ensures smallest value is at least 1
+                    beginAtZero: true,
                     ticks: {
+                        stepSize: 1,
                         callback: function(value) {
-                            return Number.isInteger(value) ? value : ''; // only display whole numbers
-                        },
-                        stepSize: 1 // forces step increments of whole numbers
+                            return Number.isInteger(value) ? value : ''; // show only whole numbers
+                        }
                     }
                 }
             }

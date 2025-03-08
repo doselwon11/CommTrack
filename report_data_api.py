@@ -8,9 +8,21 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # allow all origins
 
 # dictionary to store reports categorized by country and year
 report_database = defaultdict(lambda: {
-    "infrastructure": defaultdict(int),
-    "social": defaultdict(int)
+    "infrastructure": defaultdict(lambda: defaultdict(int)),
+    "social": defaultdict(lambda: defaultdict(int))
 })
+
+# function to get formatted timestamps for different time intervals
+def get_time_intervals():
+    now = datetime.now()
+    return {
+        "minute": now.strftime("%Y-%m-%d %H:%M"), # YYYY-MM-DD HH:MM
+        "hour": now.strftime("%Y-%m-%d %H"),      # YYYY-MM-DD HH
+        "day": now.strftime("%Y-%m-%d"),          # YYYY-MM-DD
+        "week": now.strftime("%Y-W%W"),           # YYYY-WEEKNUMBER
+        "month": now.strftime("%Y-%m"),           # YYYY-MM
+        "year": now.strftime("%Y")                # YYYY
+    }
 
 # normalization factor (adjust for scaling)
 NORMALIZATION_FACTOR = 1000  # prevents drastic score drops for small countries
@@ -49,35 +61,58 @@ social_categories = {
     "others": "Others"
 }
 
-@app.route('/submit_report', methods=['OPTIONS', 'POST'])
+@app.route('/submit_report', methods=['POST'])
 def submit_report():
-    if request.method == "OPTIONS":
-        response = jsonify({"message": "CORS preflight request successful"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        return response, 200
-
     data = request.json
-    if not data:
-        return jsonify({"error": "No data received"}), 400
 
-    # extract report details
-    report_type = data.get("type")  # infrastructure or social
+    report_type = data.get("type")  # "infrastructure" or "social"
     category = data.get("category")
     country = data.get("country")
-    year = str(datetime.now().year)  # current year
 
     if not (report_type and category and country):
         return jsonify({"error": "Missing required fields"}), 400
 
-    # map category to broader classifications
+    # Capture different timestamps
+    now = datetime.now()
+    year = str(now.year)
+    month = f"{now.year}-{now.month:02d}"
+    week = f"{now.year}-W{now.strftime('%U')}"
+    day = now.strftime("%Y-%m-%d")
+    hour = now.strftime("%Y-%m-%d %H")
+    minute = now.strftime("%Y-%m-%d %H:%M")
+
+    # Ensure country exists in the database
+    if country not in report_database:
+        report_database[country] = {
+            "infrastructure": defaultdict(int),
+            "social": defaultdict(int),
+            "trends": {
+                "infrastructure": defaultdict(lambda: defaultdict(int)),
+                "social": defaultdict(lambda: defaultdict(int))
+            }
+        }
+
+    # Store report data
     if report_type == "infrastructure":
         report_database[country]["infrastructure"][category] += 1
+
+        # Store trends under infrastructure
+        trends = report_database[country]["trends"]["infrastructure"]
     elif report_type == "social":
         report_database[country]["social"][category] += 1
+
+        # Store trends under social
+        trends = report_database[country]["trends"]["social"]
     else:
         return jsonify({"error": "Invalid report type"}), 400
+
+    # Store issue trends over time
+    trends[category][minute] += 1
+    trends[category][hour] += 1
+    trends[category][day] += 1
+    trends[category][week] += 1
+    trends[category][month] += 1
+    trends[category][year] += 1
 
     return jsonify({"message": "Report submitted successfully"}), 200
 
@@ -86,8 +121,12 @@ def get_reports():
     ranked_reports = []
 
     for country, issues in report_database.items():
-        infra_total = sum(issues["infrastructure"].values())
-        social_total = sum(issues["social"].values())
+        infra_issues = issues.get("infrastructure", {})
+        social_issues = issues.get("social", {})
+
+        # Ensure defaultdict is converted to dictionary & all values are integers
+        infra_total = sum(int(value) for value in infra_issues.values() if isinstance(value, int))
+        social_total = sum(int(value) for value in social_issues.values() if isinstance(value, int))
 
         ranked_reports.append({
             "country": country,
@@ -95,8 +134,8 @@ def get_reports():
             "total_social_issues": social_total
         })
 
-    # sort by the total number of reported issues
-    ranked_reports.sort(key=lambda x: (x["total_infrastructure_issues"], x["total_social_issues"]), reverse=True)
+    # Sort by highest number of total reported issues
+    ranked_reports.sort(key=lambda x: (x["total_infrastructure_issues"] + x["total_social_issues"]), reverse=True)
 
     return jsonify(ranked_reports), 200
 
@@ -105,14 +144,23 @@ def get_impact_index():
     ranked_data = []
 
     for country, issues in report_database.items():
-        infra_total = sum(issues["infrastructure"].values())
-        social_total = sum(issues["social"].values())
+        infra_issues = issues.get("infrastructure", {})
+        social_issues = issues.get("social", {})
 
-        # calculate scores with maximum starting point (100)
+        # Convert defaultdict to regular dictionary
+        if isinstance(infra_issues, defaultdict):
+            infra_issues = dict(infra_issues)
+        if isinstance(social_issues, defaultdict):
+            social_issues = dict(social_issues)
+
+        # Ensure all values are integers before summing
+        infra_total = sum(int(value) for value in infra_issues.values() if isinstance(value, int))
+        social_total = sum(int(value) for value in social_issues.values() if isinstance(value, int))
+
+        # Calculate scores (starting from 100, decrease based on issues)
         infra_score = max(0, 100 - (infra_total * 100 / NORMALIZATION_FACTOR))
         social_score = max(0, 100 - (social_total * 100 / NORMALIZATION_FACTOR))
 
-        # final impact index score
         impact_index = (infra_score + social_score) / 2
 
         ranked_data.append({
@@ -122,7 +170,7 @@ def get_impact_index():
             "impact_index": round(impact_index, 2)
         })
 
-    # sort by highest impact index score
+    # Sort by highest impact index score
     ranked_data.sort(key=lambda x: x["impact_index"], reverse=True)
 
     return jsonify(ranked_data), 200
@@ -131,32 +179,34 @@ def get_impact_index():
 def get_issue_trends():
     country = request.args.get("country")
     category = request.args.get("category")
-    
-    filtered_data = {}
+
+    trends_data = {}
 
     for c, data in report_database.items():
         if country and c != country:
-            continue  # Skip if country does not match
+            continue  # Skip if country filter is applied
 
-        filtered_data[c] = {
+        trends_data[c] = {
             "infrastructure": [],
             "social": []
         }
 
-        # Convert raw numbers into iterable lists
-        for cat, count in data["infrastructure"].items():
-            if isinstance(count, int):
-                filtered_data[c]["infrastructure"].append([str(datetime.now().year), count])
-            else:
-                filtered_data[c]["infrastructure"].append(count)
+        if category:
+            # Only return trends for the selected category
+            if category in data["trends"]["infrastructure"]:
+                trends_data[c]["infrastructure"] = list(data["trends"]["infrastructure"][category].items())
 
-        for cat, count in data["social"].items():
-            if isinstance(count, int):
-                filtered_data[c]["social"].append([str(datetime.now().year), count])
-            else:
-                filtered_data[c]["social"].append(count)
+            if category in data["trends"]["social"]:
+                trends_data[c]["social"] = list(data["trends"]["social"][category].items())
+        else:
+            # Return all available trends
+            for cat, values in data["trends"]["infrastructure"].items():
+                trends_data[c]["infrastructure"].extend(values.items())
 
-    return jsonify(filtered_data), 200
+            for cat, values in data["trends"]["social"].items():
+                trends_data[c]["social"].extend(values.items())
+
+    return jsonify(trends_data), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

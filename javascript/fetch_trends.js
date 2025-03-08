@@ -36,10 +36,12 @@ document.addEventListener("DOMContentLoaded", loadCountriesForForms);
 function fetchIssueTrends() {
     let selectedCountry = document.getElementById("trendCountry").value;
     let selectedCategory = document.getElementById("trendCategory").value;
+    let selectedInterval = document.getElementById("trendInterval").value;
 
     let queryParams = [];
     if (selectedCountry) queryParams.push(`country=${encodeURIComponent(selectedCountry)}`);
     if (selectedCategory) queryParams.push(`category=${encodeURIComponent(selectedCategory)}`);
+    if (selectedInterval) queryParams.push(`interval=${encodeURIComponent(selectedInterval)}`);
 
     let apiUrl = `${API_URL}/get_issue_trends`;
     if (queryParams.length) apiUrl += "?" + queryParams.join("&");
@@ -47,7 +49,7 @@ function fetchIssueTrends() {
     fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        console.log("API Response for Trends:", JSON.stringify(data, null, 2)); // Log the exact API response
+        console.log("Filtered Trend Data:", data);
         visualizeTrends(data);
     })
     .catch(error => console.error("Error fetching issue trends:", error));
@@ -57,6 +59,7 @@ function fetchIssueTrends() {
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("trendCountry").addEventListener("change", fetchIssueTrends);
     document.getElementById("trendCategory").addEventListener("change", fetchIssueTrends);
+    document.getElementById("trendInterval").addEventListener("change", fetchIssueTrends);
 });
 
 // load trends on page load

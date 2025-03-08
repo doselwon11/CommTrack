@@ -224,6 +224,15 @@
                     <option value="political">Political issues</option>
                     <option value="others">Others</option>
                 </optgroup>
+            </select><br>
+            <label for="trendInterval">Select Time Interval:</label>
+            <select id="trendInterval">
+                <option value="minute">Last Minute</option>
+                <option value="hour">Hourly</option>
+                <option value="day">Daily</option>
+                <option value="week">Weekly</option>
+                <option value="month">Monthly</option>
+                <option value="year" selected>Yearly</option>
             </select><br><br>
             <canvas id="trend-charts"></canvas>
         </section>
