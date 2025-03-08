@@ -71,6 +71,9 @@
                 
                 <label for="infraImage">Attach Photo (Optional):</label>
                 <input type="file" id="infraImage"><br>
+                <button id="openInfraCamera">📷 Open Camera</button>
+                <div id="infraImagePreview"></div>
+                <input type="hidden" id="infraImageData" name="infraImageData">
                 
                 <button type="submit">Submit Report</button>
                 <div id="shareOptions"></div>
@@ -151,6 +154,9 @@
 
                 <label for="socialImage">Attach Photo (Optional):</label>
                 <input type="file" id="socialImage"><br>
+                <button id="openSocialCamera">📷 Open Camera</button>
+                <div id="socialImagePreview"></div>
+                <input type="hidden" id="socialImageData" name="socialImageData">
                 
                 <button type="submit">Submit Report</button>
                 <div id="shareOptions"></div>
@@ -224,6 +230,7 @@
         
         
         <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+        <script src="javascript/camera.js"></script>
         <script src="javascript/config.js"></script>
         <script src="javascript/script.js"></script>
         <script src="javascript/fetch_regions.js"></script>
