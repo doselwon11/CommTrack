@@ -1,13 +1,49 @@
-// function to send a report to the backend
+// function to rewrite description with ai before submission
+function rewriteWithAI(descriptionFieldId) {
+    let description = document.getElementById(descriptionFieldId).value;
+
+    if (!description.trim()) {
+        alert("Please enter a description before rewriting with AI.");
+        return;
+    }
+
+    fetch(`${API_URL}/rewrite_description`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: description })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.rewritten_text) {
+            document.getElementById(descriptionFieldId).value = data.rewritten_text;
+            alert("Description rewritten with AI!");
+        } else {
+            alert("AI rewrite failed. Try again.");
+        }
+    })
+    .catch(error => console.error("Error rewriting description:", error));
+}
+
+// function to send a report to the backend after user confirms description
 function sendReport(reportType, category, country) {
+    let description = (reportType === "infrastructure") 
+        ? document.getElementById("infraDescription").value
+        : document.getElementById("socialDescription").value;
+
     fetch(`${API_URL}/submit_report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: reportType, category: category, country: country })
+        body: JSON.stringify({ 
+            type: reportType, 
+            category: category, 
+            country: country,
+            description: description // user-confirmed description
+        })
     })
     .then(response => response.json())
     .then(data => {
         console.log("Report submitted:", data);
+        alert("Report submitted successfully!");
         fetchReports(); // refresh rankings
     })
     .catch(error => console.error("Error submitting report:", error));

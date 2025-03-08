@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from collections import defaultdict
 from datetime import datetime
+from transformers import pipeline
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # allow all origins
@@ -11,6 +12,9 @@ report_database = defaultdict(lambda: {
     "infrastructure": defaultdict(lambda: defaultdict(int)),
     "social": defaultdict(lambda: defaultdict(int))
 })
+
+# load transformer ai summarization model
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # function to get formatted timestamps for different time intervals
 def get_time_intervals():
@@ -61,6 +65,21 @@ social_categories = {
     "others": "Others"
 }
 
+@app.route('/rewrite_description', methods=['POST'])
+def rewrite_description():
+    data = request.json
+    text = data.get("text", "")
+
+    if not text.strip():
+        return jsonify({"error": "No text provided"}), 400
+
+    try:
+        summary = summarizer(text, max_length=50, min_length=10, do_sample=False)
+        rewritten_text = summary[0]["summary_text"]
+        return jsonify({"rewritten_text": rewritten_text})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/submit_report', methods=['POST'])
 def submit_report():
     data = request.json
@@ -92,15 +111,13 @@ def submit_report():
             }
         }
 
-    # Store report data
+    # store report data
     if report_type == "infrastructure":
         report_database[country]["infrastructure"][category] += 1
-
-        # Store trends under infrastructure
+        # store trends under infrastructure
         trends = report_database[country]["trends"]["infrastructure"]
     elif report_type == "social":
         report_database[country]["social"][category] += 1
-
         # Store trends under social
         trends = report_database[country]["trends"]["social"]
     else:

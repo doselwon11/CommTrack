@@ -46,7 +46,7 @@
                 <label for="infraDescription">Description:</label>
                 <textarea id="infraDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible..."
                 oninput="suggestCategory(event, 'infrastructure')"></textarea><br>
-
+                <button type="button" onclick="rewriteWithAI('infraDescription')">Rewrite with AI</button>
                 <label for="infraIssueTime">How long has this issue been occurred?</label>
                 <select id="infraIssueTime" required>
                     <option value="days">A week or below</option>
@@ -130,6 +130,7 @@
                 <label for="socialDescription">Description:</label>
                 <textarea id="socialDescription" placeholder="Please describe the issue in detail. We encourage you to be as specific as possible."
                 oninput="suggestCategory(event, 'social')"></textarea><br>
+                <button type="button" onclick="rewriteWithAI('socialDescription')">Rewrite with AI</button>
                 
                 <label for="country">Country:</label>
                 <select id="country" class="country-dropdown" required></select><br>
