@@ -1,5 +1,4 @@
 import re
-import torch
 from transformers import pipeline
 
 # load a pre-trained transformer model for text classification (can fine-tune later)
