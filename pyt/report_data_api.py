@@ -5,6 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from transformers import pipeline
 from dotenv import load_dotenv
+from word_filter import detect_bad
 import requests
 
 # load environment variables from .env
@@ -120,6 +121,12 @@ def submit_report():
     report_type = data.get("type")  # "infrastructure" or "social"
     category = data.get("category")
     country = data.get("country")
+    description = data.get("description", "")
+
+     # spam detection before accepting submission
+    is_spam, reason = detect_bad(description)
+    if is_spam:
+        return jsonify({"error": "Bad words detected: " + reason}), 400
 
     if not (report_type and category and country):
         return jsonify({"error": "Missing required fields"}), 400

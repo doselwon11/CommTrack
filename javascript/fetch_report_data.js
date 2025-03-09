@@ -42,6 +42,10 @@ function sendReport(reportType, category, country) {
     })
     .then(response => response.json())
     .then(data => {
+        if (data.error) {
+            alert(`Error: ${data.error}`);  // show error message in alert
+            return;  // stop execution if there's an error
+        }
         console.log("Report submitted:", data);
         alert("Report submitted successfully!");
         fetchReports(); // refresh rankings
