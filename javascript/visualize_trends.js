@@ -2,8 +2,10 @@
 function visualizeTrends(trendData) {
     console.log("Trend Data Received:", JSON.stringify(trendData, null, 2));
 
+    // check if there's valid data
     if (!trendData || Object.keys(trendData).length === 0) {
         console.error("No valid trend data available.");
+        clearChart();
         return;
     }
 
@@ -12,6 +14,7 @@ function visualizeTrends(trendData) {
     let labels = new Set();
     let infraData = {};
     let socialData = {};
+    let hasData = false; // flag to check if there is actual trend data
 
     for (let country in trendData) {
         let infraTrends = trendData[country]["infrastructure"] || {};
@@ -23,6 +26,7 @@ function visualizeTrends(trendData) {
                 labels.add(timestamp);
                 if (!infraData[timestamp]) infraData[timestamp] = 0;
                 infraData[timestamp] += count;
+                hasData = true;
             });
         });
 
@@ -32,8 +36,16 @@ function visualizeTrends(trendData) {
                 labels.add(timestamp);
                 if (!socialData[timestamp]) socialData[timestamp] = 0;
                 socialData[timestamp] += count;
+                hasData = true;
             });
         });
+    }
+
+    // if there's no valid data, clear the chart
+    if (!hasData) {
+        console.warn("No actual data to display.");
+        clearChart();
+        return;
     }
 
     // convert labels to a sorted array
@@ -84,4 +96,12 @@ function visualizeTrends(trendData) {
             }
         }
     });
+}
+
+// function to clear the chart when no data is available
+function clearChart() {
+    if (window.trendChart) {
+        window.trendChart.destroy();
+        window.trendChart = null;
+    }
 }
